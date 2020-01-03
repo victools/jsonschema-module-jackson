@@ -98,7 +98,7 @@ public class JacksonModule implements Module {
     /**
      * Determine the given type's associated "description" via the following annotation.
      * <ul>
-     * <li>{@link JsonClassDescription} annotation on the field's type</li>
+     * <li>{@link JsonClassDescription} annotation on the targeted type's class</li>
      * </ul>
      *
      * @param scope scope for which to collect an available description
