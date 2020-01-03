@@ -27,6 +27,7 @@ import com.github.victools.jsonschema.generator.MemberScope;
 import com.github.victools.jsonschema.generator.MethodScope;
 import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
+import com.github.victools.jsonschema.generator.TypeScope;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,8 @@ public class JacksonModule implements Module {
                 .withDescriptionResolver(this::resolveDescription)
                 .withPropertyNameOverrideResolver(this::getPropertyNameOverride)
                 .withIgnoreCheck(this::shouldIgnoreField);
+        builder.forTypesInGeneral()
+                .withDescriptionResolver(this::resolveDescriptionForType);
     }
 
     /**
@@ -78,7 +81,6 @@ public class JacksonModule implements Module {
      * <ol>
      * <li>{@link JsonPropertyDescription} annotation on the field itself</li>
      * <li>{@link JsonPropertyDescription} annotation on the field's getter method</li>
-     * <li>{@link JsonClassDescription} annotation on the field's type</li>
      * </ol>
      *
      * @param field field for which to collect an available description
@@ -90,8 +92,20 @@ public class JacksonModule implements Module {
         if (propertyAnnotation != null) {
             return propertyAnnotation.value();
         }
-        // alternatively look for general class description
-        Class<?> rawType = field.getType().getErasedType();
+        return null;
+    }
+
+    /**
+     * Determine the given type's associated "description" via the following annotation.
+     * <ul>
+     * <li>{@link JsonClassDescription} annotation on the field's type</li>
+     * </ul>
+     *
+     * @param scope scope for which to collect an available description
+     * @return successfully looked-up description (or {@code null})
+     */
+    protected String resolveDescriptionForType(TypeScope scope) {
+        Class<?> rawType = scope.getType().getErasedType();
         JsonClassDescription classAnnotation = rawType.getAnnotation(JsonClassDescription.class);
         if (classAnnotation != null) {
             return classAnnotation.value();
