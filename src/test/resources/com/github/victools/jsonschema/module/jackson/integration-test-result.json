@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "fieldWithDescription": {
+            "type": ["string", "null"],
+            "description": "field description"
+        },
+        "fieldWithOverriddenName": {
+            "type": "boolean"
+        }
+    },
+    "description": "test description"
+}
