@@ -23,6 +23,8 @@ import com.github.victools.jsonschema.generator.ConfigFunction;
 import com.github.victools.jsonschema.generator.FieldScope;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigPart;
+import com.github.victools.jsonschema.generator.SchemaGeneratorTypeConfigPart;
+import com.github.victools.jsonschema.generator.TypeScope;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Assert;
@@ -40,12 +42,15 @@ public class JacksonModuleTest {
 
     private SchemaGeneratorConfigBuilder configBuilder;
     private SchemaGeneratorConfigPart<FieldScope> fieldConfigPart;
+    private SchemaGeneratorTypeConfigPart<TypeScope> typesInGeneralConfigPart;
 
     @Before
     public void setUp() {
         this.configBuilder = Mockito.mock(SchemaGeneratorConfigBuilder.class);
         this.fieldConfigPart = Mockito.spy(new SchemaGeneratorConfigPart<>());
         Mockito.when(this.configBuilder.forFields()).thenReturn(this.fieldConfigPart);
+        this.typesInGeneralConfigPart = Mockito.spy(new SchemaGeneratorTypeConfigPart<>());
+        Mockito.when(this.configBuilder.forTypesInGeneral()).thenReturn(this.typesInGeneralConfigPart);
     }
 
     @Test
@@ -54,10 +59,13 @@ public class JacksonModuleTest {
 
         Mockito.verify(this.configBuilder).getObjectMapper();
         Mockito.verify(this.configBuilder).forFields();
+        Mockito.verify(this.configBuilder).forTypesInGeneral();
 
         Mockito.verify(this.fieldConfigPart).withDescriptionResolver(Mockito.any());
         Mockito.verify(this.fieldConfigPart).withIgnoreCheck(Mockito.any());
         Mockito.verify(this.fieldConfigPart).withPropertyNameOverrideResolver(Mockito.any());
+
+        Mockito.verify(this.typesInGeneralConfigPart).withDescriptionResolver(Mockito.any());
 
         Mockito.verifyNoMoreInteractions(this.configBuilder, this.fieldConfigPart);
     }
@@ -92,7 +100,7 @@ public class JacksonModuleTest {
             {"fieldWithDescription", "field description 1"},
             {"fieldWithDescriptionOnGetter", "getter description 1"},
             {"fieldWithDescriptionAndOnGetter", "field description 2"},
-            {"fieldWithDescriptionOnType", "class description text"}
+            {"fieldWithDescriptionOnType", null}
         };
     }
 
@@ -105,6 +113,29 @@ public class JacksonModuleTest {
 
         ArgumentCaptor<ConfigFunction<FieldScope, String>> captor = ArgumentCaptor.forClass(ConfigFunction.class);
         Mockito.verify(this.fieldConfigPart).withDescriptionResolver(captor.capture());
+        String description = captor.getValue().apply(field);
+        Assert.assertEquals(expectedDescription, description);
+    }
+
+    Object parametersForTestDescriptionForTypeResolver() {
+        return new Object[][]{
+            {"unannotatedField", null},
+            {"fieldWithDescription", null},
+            {"fieldWithDescriptionOnGetter", null},
+            {"fieldWithDescriptionAndOnGetter", null},
+            {"fieldWithDescriptionOnType", "class description text"}
+        };
+    }
+
+    @Test
+    @Parameters
+    public void testDescriptionForTypeResolver(String fieldName, String expectedDescription) throws Exception {
+        new JacksonModule().applyToConfigBuilder(this.configBuilder);
+
+        FieldScope field = new TestType(TestClassForDescription.class).getMemberField(fieldName);
+
+        ArgumentCaptor<ConfigFunction<TypeScope, String>> captor = ArgumentCaptor.forClass(ConfigFunction.class);
+        Mockito.verify(this.typesInGeneralConfigPart).withDescriptionResolver(captor.capture());
         String description = captor.getValue().apply(field);
         Assert.assertEquals(expectedDescription, description);
     }

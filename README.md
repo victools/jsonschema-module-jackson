@@ -5,9 +5,10 @@
 Module for the `jsonschema-generator` – deriving JSON Schema attributes from `jackson` annotations.
 
 ## Features
-1. Populate "description" as per `@JsonPropertyDescription` (falling-back on `@JsonClassDescription`).
-2. Apply alternative field names defined in `@JsonProperty` annotations.
-3. Ignore fields that are deemed to be ignored according to various `jackson-annotations` (e.g. `@JsonIgnore`, `@JsonIgnoreType`, `@JsonIgnoreProperties`) or are otherwise supposed to be excluded.
+1. Populate a field/method's "description" as per `@JsonPropertyDescription`
+2. Populate a type's "description" as per `@JsonClassDescription`.
+3. Apply alternative field names defined in `@JsonProperty` annotations.
+4. Ignore fields that are deemed to be ignored according to various `jackson-annotations` (e.g. `@JsonIgnore`, `@JsonIgnoreType`, `@JsonIgnoreProperties`) or are otherwise supposed to be excluded.
 
 Schema attributes derived from validation annotations on getter methods are also applied to their associated fields.
 
@@ -17,9 +18,13 @@ Schema attributes derived from validation annotations on getter methods are also
 <dependency>
     <groupId>com.github.victools</groupId>
     <artifactId>jsonschema-module-jackson</artifactId>
-    <version>3.0.0</version>
+    <version>4.0.0</version>
 </dependency>
 ```
+
+### Compatibility
+Please note that while the minor versions may differ, it is recommended to use matching major versions of the `jsonschema-generator` and this module.
+However, versions 3.* of this module are also compatible with `jsonschema-generator` 4.* (as no existing features were removed/broken).
 
 ### Code
 #### Passing into SchemaGeneratorConfigBuilder.with(Module)
