@@ -23,7 +23,7 @@ import com.github.victools.jsonschema.generator.ConfigFunction;
 import com.github.victools.jsonschema.generator.FieldScope;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigPart;
-import com.github.victools.jsonschema.generator.SchemaGeneratorTypeConfigPart;
+import com.github.victools.jsonschema.generator.SchemaGeneratorGeneralConfigPart;
 import com.github.victools.jsonschema.generator.TypeScope;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -42,14 +42,14 @@ public class JacksonModuleTest {
 
     private SchemaGeneratorConfigBuilder configBuilder;
     private SchemaGeneratorConfigPart<FieldScope> fieldConfigPart;
-    private SchemaGeneratorTypeConfigPart<TypeScope> typesInGeneralConfigPart;
+    private SchemaGeneratorGeneralConfigPart typesInGeneralConfigPart;
 
     @Before
     public void setUp() {
         this.configBuilder = Mockito.mock(SchemaGeneratorConfigBuilder.class);
         this.fieldConfigPart = Mockito.spy(new SchemaGeneratorConfigPart<>());
         Mockito.when(this.configBuilder.forFields()).thenReturn(this.fieldConfigPart);
-        this.typesInGeneralConfigPart = Mockito.spy(new SchemaGeneratorTypeConfigPart<>());
+        this.typesInGeneralConfigPart = Mockito.spy(new SchemaGeneratorGeneralConfigPart());
         Mockito.when(this.configBuilder.forTypesInGeneral()).thenReturn(this.typesInGeneralConfigPart);
     }
 
