@@ -34,9 +34,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Implementation of the {@link CustomDefinitionProviderV2} interface for treating enum types as plain strings based on a {@link JsonValue @JsonValue}
- * annotation being present with {@code value = true} on exactly one argument-free method. If no such annotation exists, no custom definition will be
- * returned; thereby falling back on whatever is defined in a following custom definition (e.g. from one of the standard {@code Option}s).
+ * Implementation of the {@link CustomDefinitionProviderV2} interface for treating enum types as plain strings based on a {@link JsonValue} annotation
+ * being present with {@code value = true} on exactly one argument-free method. If no such annotation exists, no custom definition will be returned;
+ * thereby falling back on whatever is defined in a following custom definition (e.g. from one of the standard generator {@code Option}s).
  */
 public class CustomEnumJsonValueDefinitionProvider implements CustomDefinitionProviderV2 {
 

@@ -23,7 +23,7 @@ public enum JacksonOption {
     /**
      * Use this option to treat enum types with a {@link com.fasterxml.jackson.annotation.JsonValue JsonValue} annotation on one of its methods as
      * plain strings in the generated schema. If no such annotation with {@code value = true} is present on exactly one argument-free method, it will
-     * fall-back on following custom definitions (e.g. from one of the standard generator options.
+     * fall-back on following custom definitions (e.g. from one of the standard generator {@code Option}s).
      *
      * @see com.github.victools.jsonschema.generator.Option#FLATTENED_ENUMS
      * @see com.github.victools.jsonschema.generator.Option#FLATTENED_ENUMS_FROM_TOSTRING
