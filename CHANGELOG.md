@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.0.0]
+## [4.4.0] - 2020-03-04
+- No feature changes, just bumping of minor version to indicate compatibility with `jsonschema-generator` version `4.4.*`
+
+## [4.0.0] - 2020-01-03
 ### Changed
 - Look-up descriptions from `@JsonClassDescription` via new `forTypesInGeneral()` API
 
@@ -18,6 +21,7 @@ BEWARE: The `forTypesInGeneral()` API was only added to the main generator libra
 - Apply alternative field names defined in `@JsonProperty` annotations.
 - Ignore fields that are deemed to be ignored according to various `jackson-annotations` (e.g. `@JsonIgnore`, `@JsonIgnoreType`, `@JsonIgnoreProperties`) or are otherwise supposed to be excluded.
 
-[Unreleased]: https://github.com/victools/jsonschema-module-jackson/compare/v4.0.0...HEAD
+[Unreleased]: https://github.com/victools/jsonschema-module-jackson/compare/v4.4.0...HEAD
+[4.4.0]: https://github.com/victools/jsonschema-module-jackson/compare/v4.0.0...v4.4.0
 [4.0.0]: https://github.com/victools/jsonschema-module-jackson/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/victools/jsonschema-module-jackson/releases/tag/v3.0.0
