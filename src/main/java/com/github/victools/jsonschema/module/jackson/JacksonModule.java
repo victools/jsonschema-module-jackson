@@ -27,9 +27,13 @@ import com.github.victools.jsonschema.generator.MemberScope;
 import com.github.victools.jsonschema.generator.MethodScope;
 import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
+import com.github.victools.jsonschema.generator.SchemaGeneratorGeneralConfigPart;
 import com.github.victools.jsonschema.generator.TypeScope;
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,12 +43,23 @@ import java.util.Set;
  * <li>Populate the "description" attributes as per {@link JsonPropertyDescription} and {@link JsonClassDescription} annotations.</li>
  * <li>Apply alternative property names defined in {@link JsonProperty} annotations.</li>
  * <li>Exclude properties that are deemed to be ignored per the various annotations for that purpose.</li>
+ * <li>Optionally: treat enum types as plain strings as per {@link com.fasterxml.jackson.annotation.JsonValue JsonValue} annotations.</li>
  * </ul>
  */
 public class JacksonModule implements Module {
 
+    private final Set<JacksonOption> options;
     private ObjectMapper objectMapper;
     private final Map<Class<?>, BeanDescription> beanDescriptions = new HashMap<>();
+
+    /**
+     * Constructor.
+     *
+     * @param options features to enable
+     */
+    public JacksonModule(JacksonOption... options) {
+        this.options = options == null ? Collections.emptySet() : new HashSet<>(Arrays.asList(options));
+    }
 
     @Override
     public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
@@ -53,8 +68,12 @@ public class JacksonModule implements Module {
                 .withDescriptionResolver(this::resolveDescription)
                 .withPropertyNameOverrideResolver(this::getPropertyNameOverride)
                 .withIgnoreCheck(this::shouldIgnoreField);
-        builder.forTypesInGeneral()
-                .withDescriptionResolver(this::resolveDescriptionForType);
+        SchemaGeneratorGeneralConfigPart generalConfigPart = builder.forTypesInGeneral();
+        generalConfigPart.withDescriptionResolver(this::resolveDescriptionForType);
+
+        if (this.options.contains(JacksonOption.FLATTENED_ENUMS_FROM_JSONVALUE)) {
+            generalConfigPart.withCustomDefinitionProvider(new CustomEnumJsonValueDefinitionProvider());
+        }
     }
 
     /**

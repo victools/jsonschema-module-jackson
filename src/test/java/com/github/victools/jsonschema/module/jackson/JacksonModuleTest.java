@@ -57,6 +57,24 @@ public class JacksonModuleTest {
     public void testApplyToConfigBuilder() {
         new JacksonModule().applyToConfigBuilder(this.configBuilder);
 
+        this.verifyCommonConfigurations();
+
+        Mockito.verifyNoMoreInteractions(this.configBuilder, this.fieldConfigPart, this.typesInGeneralConfigPart);
+    }
+
+    @Test
+    public void testApplyToConfigBuilderWithFlattenedEnumOption() {
+        new JacksonModule(JacksonOption.FLATTENED_ENUMS_FROM_JSONVALUE)
+                .applyToConfigBuilder(this.configBuilder);
+
+        this.verifyCommonConfigurations();
+
+        Mockito.verify(this.typesInGeneralConfigPart).withCustomDefinitionProvider(Mockito.any());
+
+        Mockito.verifyNoMoreInteractions(this.configBuilder, this.fieldConfigPart, this.typesInGeneralConfigPart);
+    }
+
+    private void verifyCommonConfigurations() {
         Mockito.verify(this.configBuilder).getObjectMapper();
         Mockito.verify(this.configBuilder).forFields();
         Mockito.verify(this.configBuilder).forTypesInGeneral();
@@ -66,8 +84,6 @@ public class JacksonModuleTest {
         Mockito.verify(this.fieldConfigPart).withPropertyNameOverrideResolver(Mockito.any());
 
         Mockito.verify(this.typesInGeneralConfigPart).withDescriptionResolver(Mockito.any());
-
-        Mockito.verifyNoMoreInteractions(this.configBuilder, this.fieldConfigPart);
     }
 
     Object parametersForTestPropertyNameOverride() {
