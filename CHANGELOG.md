@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- New `JacksonOption.FLATTENED_ENUMS_FROM_JSONVALUE` for considering `@JsonValue` annotations on enums, similar to `Option.FLATTENED_ENUMS`
 
 ## [4.4.0] - 2020-03-04
 - No feature changes, just bumping of minor version to indicate compatibility with `jsonschema-generator` version `4.4.*`

@@ -19,8 +19,10 @@ package com.github.victools.jsonschema.module.jackson;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.victools.jsonschema.generator.OptionPreset;
 import com.github.victools.jsonschema.generator.SchemaGenerator;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
@@ -44,8 +46,8 @@ public class IntegrationTest {
      */
     @Test
     public void testIntegration() throws Exception {
-        JacksonModule module = new JacksonModule();
-        SchemaGeneratorConfig config = new SchemaGeneratorConfigBuilder(new ObjectMapper())
+        JacksonModule module = new JacksonModule(JacksonOption.FLATTENED_ENUMS_FROM_JSONVALUE);
+        SchemaGeneratorConfig config = new SchemaGeneratorConfigBuilder(new ObjectMapper(), OptionPreset.PLAIN_JSON)
                 .with(module)
                 .build();
         SchemaGenerator generator = new SchemaGenerator(config);
@@ -78,5 +80,22 @@ public class IntegrationTest {
 
         @JsonProperty("fieldWithOverriddenName")
         public boolean originalFieldName;
+
+        public TestEnum enumValueHandledByStandardOption;
+
+        public TestEnumWithJsonValueAnnotation enumValueWithJsonValueAnnotation;
+    }
+
+    static enum TestEnum {
+        A, B, C;
+    }
+
+    static enum TestEnumWithJsonValueAnnotation {
+        ENTRY1, ENTRY2, ENTRY3;
+
+        @JsonValue
+        public String getJsonValue() {
+            return this.name().toLowerCase();
+        }
     }
 }
