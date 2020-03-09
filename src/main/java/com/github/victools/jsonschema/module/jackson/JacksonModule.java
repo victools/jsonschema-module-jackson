@@ -53,6 +53,15 @@ public class JacksonModule implements Module {
     private final Map<Class<?>, BeanDescription> beanDescriptions = new HashMap<>();
 
     /**
+     * Constructor, without any additional options.
+     *
+     * @see JacksonModule#JacksonModule(JacksonOption...)
+     */
+    public JacksonModule() {
+        this.options = Collections.emptySet();
+    }
+
+    /**
      * Constructor.
      *
      * @param options features to enable
