@@ -22,8 +22,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.CustomDefinition;
 import com.github.victools.jsonschema.generator.CustomDefinitionProviderV2;
-import com.github.victools.jsonschema.generator.SchemaConstants;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
+import com.github.victools.jsonschema.generator.SchemaKeyword;
 import com.github.victools.jsonschema.generator.impl.AttributeCollector;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -59,9 +59,9 @@ public class CustomEnumJsonValueDefinitionProvider implements CustomDefinitionPr
             return null;
         }
         ObjectNode customNode = context.getGeneratorConfig().createObjectNode()
-                .put(SchemaConstants.TAG_TYPE, SchemaConstants.TAG_TYPE_STRING);
+                .put(context.getKeyword(SchemaKeyword.TAG_TYPE), context.getKeyword(SchemaKeyword.TAG_TYPE_STRING));
         AttributeCollector standardAttributeCollector = new AttributeCollector(context.getGeneratorConfig().getObjectMapper());
-        standardAttributeCollector.setEnum(customNode, serialisedJsonValues);
+        standardAttributeCollector.setEnum(customNode, serialisedJsonValues, context);
         return new CustomDefinition(customNode);
     }
 

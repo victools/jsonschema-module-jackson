@@ -8,8 +8,9 @@ Module for the `jsonschema-generator` – deriving JSON Schema attributes from `
 1. Populate a field/method's "description" as per `@JsonPropertyDescription`
 2. Populate a type's "description" as per `@JsonClassDescription`.
 3. Apply alternative field names defined in `@JsonProperty` annotations.
-4. Ignore fields that are deemed to be ignored according to various `jackson-annotations` (e.g. `@JsonIgnore`, `@JsonIgnoreType`, `@JsonIgnoreProperties`) or are otherwise supposed to be excluded.
-5. Optionally: treat enum types as plain strings, serialized by `@JsonValue` annotated method
+4. Ignore fields that are marked with a `@JsonBackReference` annotation.
+5. Ignore fields that are deemed to be ignored according to various other `jackson-annotations` (e.g. `@JsonIgnore`, `@JsonIgnoreType`, `@JsonIgnoreProperties`) or are otherwise supposed to be excluded.
+6. Optionally: treat enum types as plain strings, serialized by `@JsonValue` annotated method
 
 Schema attributes derived from validation annotations on getter methods are also applied to their associated fields.
 

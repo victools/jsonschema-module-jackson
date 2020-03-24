@@ -24,8 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.CustomDefinition;
-import com.github.victools.jsonschema.generator.SchemaConstants;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
+import com.github.victools.jsonschema.generator.SchemaKeyword;
+import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.github.victools.jsonschema.generator.TypeContext;
 import com.github.victools.jsonschema.generator.impl.TypeContextFactory;
 import junitparams.JUnitParamsRunner;
@@ -55,6 +56,8 @@ public class CustomEnumJsonValueDefinitionProviderTest {
         Mockito.when(this.generationContext.getGeneratorConfig().getObjectMapper()).thenReturn(objectMapper);
         Mockito.when(this.generationContext.getGeneratorConfig().createObjectNode())
                 .thenAnswer((_invocation) -> objectMapper.createObjectNode());
+        Mockito.when(this.generationContext.getKeyword(Mockito.any()))
+                .thenAnswer(invocation -> ((SchemaKeyword) invocation.getArgument(0)).forVersion(SchemaVersion.DRAFT_2019_09));
     }
 
     @Test
@@ -65,8 +68,9 @@ public class CustomEnumJsonValueDefinitionProviderTest {
         Assert.assertFalse(result.isMeantToBeInline());
         ObjectNode customDefinitionNode = result.getValue();
         Assert.assertEquals(2, customDefinitionNode.size());
-        Assert.assertEquals(SchemaConstants.TAG_TYPE_STRING, customDefinitionNode.get(SchemaConstants.TAG_TYPE).asText());
-        JsonNode enumNode = customDefinitionNode.get(SchemaConstants.TAG_ENUM);
+        Assert.assertEquals(SchemaKeyword.TAG_TYPE_STRING.forVersion(SchemaVersion.DRAFT_2019_09),
+                customDefinitionNode.get(SchemaKeyword.TAG_TYPE.forVersion(SchemaVersion.DRAFT_2019_09)).asText());
+        JsonNode enumNode = customDefinitionNode.get(SchemaKeyword.TAG_ENUM.forVersion(SchemaVersion.DRAFT_2019_09));
         Assert.assertTrue(enumNode.isArray());
         ArrayNode arrayNode = (ArrayNode) enumNode;
         Assert.assertEquals(2, arrayNode.size());
