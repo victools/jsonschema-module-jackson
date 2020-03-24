@@ -31,7 +31,8 @@ BEWARE: The `forTypesInGeneral()` API was only added to the main generator libra
 - Apply alternative field names defined in `@JsonProperty` annotations.
 - Ignore fields that are deemed to be ignored according to various `jackson-annotations` (e.g. `@JsonIgnore`, `@JsonIgnoreType`, `@JsonIgnoreProperties`) or are otherwise supposed to be excluded.
 
-[Unreleased]: https://github.com/victools/jsonschema-module-jackson/compare/v4.5.0...HEAD
+[Unreleased]: https://github.com/victools/jsonschema-module-jackson/compare/v4.5.1...HEAD
+[4.5.1]: https://github.com/victools/jsonschema-module-jackson/compare/v4.5.0...v4.5.1
 [4.5.0]: https://github.com/victools/jsonschema-module-jackson/compare/v4.4.0...v4.5.0
 [4.4.0]: https://github.com/victools/jsonschema-module-jackson/compare/v4.0.0...v4.4.0
 [4.0.0]: https://github.com/victools/jsonschema-module-jackson/compare/v3.0.0...v4.0.0
