@@ -17,19 +17,18 @@
 package com.github.victools.jsonschema.module.jackson;
 
 import com.fasterxml.classmate.ResolvedType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.victools.jsonschema.generator.FieldScope;
-import com.github.victools.jsonschema.generator.MemberScope;
-import com.github.victools.jsonschema.generator.MethodScope;
 import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfigPart;
 import com.github.victools.jsonschema.generator.SchemaGeneratorGeneralConfigPart;
 import com.github.victools.jsonschema.generator.TypeScope;
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,8 +72,8 @@ public class JacksonModule implements Module {
     @Override
     public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
         this.objectMapper = builder.getObjectMapper();
-        builder.forFields()
-                .withDescriptionResolver(this::resolveDescription)
+        SchemaGeneratorConfigPart<FieldScope> fieldConfigPart = builder.forFields();
+        fieldConfigPart.withDescriptionResolver(this::resolveDescription)
                 .withPropertyNameOverrideResolver(this::getPropertyNameOverride)
                 .withIgnoreCheck(this::shouldIgnoreField);
         SchemaGeneratorGeneralConfigPart generalConfigPart = builder.forTypesInGeneral();
@@ -83,25 +82,6 @@ public class JacksonModule implements Module {
         if (this.options.contains(JacksonOption.FLATTENED_ENUMS_FROM_JSONVALUE)) {
             generalConfigPart.withCustomDefinitionProvider(new CustomEnumJsonValueDefinitionProvider());
         }
-    }
-
-    /**
-     * Retrieves the annotation instance of the given type, either from the field it self or (if not present) from its getter.
-     *
-     * @param <A> type of annotation
-     * @param field field to retrieve annotation instance from (or from its getter)
-     * @param annotationClass type of annotation
-     * @return annotation instance (or {@code null})
-     * @see MemberScope#getAnnotation(Class)
-     * @see FieldScope#findGetter()
-     */
-    protected <A extends Annotation> A getAnnotationFromFieldOrGetter(FieldScope field, Class<A> annotationClass) {
-        A annotation = field.getAnnotation(annotationClass);
-        if (annotation == null) {
-            MethodScope getter = field.findGetter();
-            annotation = getter == null ? null : getter.getAnnotation(annotationClass);
-        }
-        return annotation;
     }
 
     /**
@@ -116,7 +96,7 @@ public class JacksonModule implements Module {
      */
     protected String resolveDescription(FieldScope field) {
         // look for property specific description
-        JsonPropertyDescription propertyAnnotation = this.getAnnotationFromFieldOrGetter(field, JsonPropertyDescription.class);
+        JsonPropertyDescription propertyAnnotation = field.getAnnotationConsideringFieldAndGetter(JsonPropertyDescription.class);
         if (propertyAnnotation != null) {
             return propertyAnnotation.value();
         }
@@ -152,7 +132,7 @@ public class JacksonModule implements Module {
      * @return alternative property name (or {@code null})
      */
     protected String getPropertyNameOverride(FieldScope field) {
-        JsonProperty annotation = this.getAnnotationFromFieldOrGetter(field, JsonProperty.class);
+        JsonProperty annotation = field.getAnnotationConsideringFieldAndGetter(JsonProperty.class);
         if (annotation != null) {
             String nameOverride = annotation.value();
             // check for invalid overrides
@@ -180,12 +160,15 @@ public class JacksonModule implements Module {
     /**
      * Determine whether a given field should be ignored, according to various jackson annotations for that purpose,
      * <br>
-     * e.g. {@code JsonIgnore}, {@code JsonIgnoreType}, {@code JsonIgnoreProperties}
+     * e.g. {@code JsonBackReference}, {@code JsonIgnore}, {@code JsonIgnoreType}, {@code JsonIgnoreProperties}
      *
      * @param field field to check
      * @return whether field should be excluded
      */
     protected boolean shouldIgnoreField(FieldScope field) {
+        if (field.getAnnotationConsideringFieldAndGetter(JsonBackReference.class) != null) {
+            return true;
+        }
         // instead of re-creating the various ways a property may be included/excluded in jackson: just use its built-in introspection
         BeanDescription beanDescription = this.getBeanDescriptionForClass(field.getDeclaringType());
         // some kinds of field ignorals are only available via an annotation introspector
