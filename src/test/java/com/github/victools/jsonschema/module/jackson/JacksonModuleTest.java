@@ -59,6 +59,19 @@ public class JacksonModuleTest {
 
         this.verifyCommonConfigurations();
 
+        Mockito.verify(this.typesInGeneralConfigPart).withSubtypeResolver(Mockito.any());
+        Mockito.verify(this.fieldConfigPart).withTargetTypeOverridesResolver(Mockito.any());
+
+        Mockito.verifyNoMoreInteractions(this.configBuilder, this.fieldConfigPart, this.typesInGeneralConfigPart);
+    }
+
+    @Test
+    public void testApplyToConfigBuilderWithSkipSubtypeLookupOption() {
+        new JacksonModule(JacksonOption.SKIP_SUBTYPE_LOOKUP)
+                .applyToConfigBuilder(this.configBuilder);
+
+        this.verifyCommonConfigurations();
+
         Mockito.verifyNoMoreInteractions(this.configBuilder, this.fieldConfigPart, this.typesInGeneralConfigPart);
     }
 
@@ -70,6 +83,8 @@ public class JacksonModuleTest {
         this.verifyCommonConfigurations();
 
         Mockito.verify(this.typesInGeneralConfigPart).withCustomDefinitionProvider(Mockito.any());
+        Mockito.verify(this.typesInGeneralConfigPart).withSubtypeResolver(Mockito.any());
+        Mockito.verify(this.fieldConfigPart).withTargetTypeOverridesResolver(Mockito.any());
 
         Mockito.verifyNoMoreInteractions(this.configBuilder, this.fieldConfigPart, this.typesInGeneralConfigPart);
     }

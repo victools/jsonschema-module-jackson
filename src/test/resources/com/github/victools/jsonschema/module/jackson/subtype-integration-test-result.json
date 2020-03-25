@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "TestSubClass2": {
+            "type": "object",
+            "properties": {
+                "superClassViaExternalProperty": {
+                    "anyOf": [{
+                            "$ref": "#/definitions/TestSubClassWithTypeNameAnnotation"
+                        }, {
+                            "$ref": "#/definitions/TestSubClass3"
+                        }]
+                },
+                "typeString": {
+                    "type": "string"
+                }
+            }
+        },
+        "TestSubClass3": {
+            "type": "object",
+            "properties": {
+                "recursiveSubClass3": {
+                    "$ref": "#/definitions/TestSubClass3"
+                },
+                "typeString": {
+                    "type": "string"
+                }
+            }
+        },
+        "TestSubClassWithTypeNameAnnotation": {
+            "type": "object",
+            "properties": {
+                "directSubClass2": {
+                    "$ref": "#/definitions/TestSubClass2"
+                },
+                "typeString": {
+                    "type": "string"
+                }
+            }
+        },
+        "TestSuperClass": {
+            "anyOf": [{
+                    "$ref": "#/definitions/TestSubClassWithTypeNameAnnotation"
+                }, {
+                    "$ref": "#/definitions/TestSubClass2"
+                }, {
+                    "$ref": "#/definitions/TestSubClass3"
+                }]
+        }
+    },
+    "type": "object",
+    "properties": {
+        "supertypeAsWrapperArray": {
+            "$ref": "#/definitions/TestSuperClass"
+        },
+        "supertypeWithJsonSubTypesAnnotation": {
+            "anyOf": [{
+                    "$ref": "#/definitions/TestSubClassWithTypeNameAnnotation"
+                }, {
+                    "$ref": "#/definitions/TestSubClass2"
+                }]
+        },
+        "supertypeWithoutAnnotation": {
+            "$ref": "#/definitions/TestSuperClass"
+        }
+    }
+}
